@@ -3,17 +3,75 @@ import time
 from ezGraph import *
 from rStats import *
 
-#Model
-# h = 2t - 3.22
-
-def avg(lst):
-    return sum(lst)/len(lst)
-
+# Difference Model
 
 #Parameters
 dt = 1
 nsteps = 30
 
+r = 2.25 #radius (cm)
+Q = 30 # Volume inflow rate: (dv/dt) (cubic cm / s)
+h = 0        #initial hight (cm)
+k = 0.0      #outflow rate constant
+
+#Experimental Data
+x_measured = [1,7,12,17,22,26]
+y_measured = [0,10,20,30,40,50]
+y_modeled = []
+
+#Graph
+graph = ezGraphMM(xmax = 100,
+    ymin=0, ymax=100,
+    x_measured = x_measured,
+    y_measured = y_measured,
+    xLabel="Time (s)",
+    yLabel="Height (cm)")
+
+graph.addModeled(0,h)
+
+#TIME LOOP
+for t in range(nsteps):
+    modelTime = t * dt
+
+    #Filling
+    dh = Q * dt / (np.pi * r **2)
+    h = h + dh
+
+    #Draining
+    dVdt = -k * h 
+    dh = dVdt * dt / (np.pi * r**2)
+    h = h + dh
+
+    # save height (h) calculated by the model
+    #  only if the model time corresponds to one
+    #  of the times when a measurement was taken
+    if (modelTime in x_measured):
+        print(modelTime, h)
+        y_modeled.append(h)
+
+    graph.addModeled(modelTime, h)
+    #graph.wait(.1)
+
+
+print('time:', x_measured)   
+print('h_measured:', y_measured)
+print("h_modeled:", y_modeled)
+
+print(f'xavg measured =  {avg(x_measured)}')
+print(f'yavg measured =  {avg(y_measured)}')
+
+r = res(y_measured, y_modeled)
+print(f'residual = {r}')
+
+d = dsq(y_measured)
+print(f'difference = {d}')
+
+r2 = rSquared(y_measured, y_modeled)
+print(f'r squared = {r2}')
+
+
+#draw graph
+graph.keepOpen()
 
 # Model:
 # - Representation of the real world.
@@ -36,108 +94,3 @@ nsteps = 30
 # -- The computer is used to keep track of all the interactions.
 # -- We'll focus on things that change over time.  
 # -- We'll focus on finite difference models. 
-
-
-# linear model
-# m = 5.03
-# b = -17.2
-
-r = 2.25 #radius (cm)
-Q = 30 # Volume inflow rate: (dv/dt) (cubic cm / s)
-h = 0        #initial hight (cm)
-k = 0.0      #outflow rate constant
-
-x_measured = [1,7,12,17,22,26]
-y_measured = [0,10,20,30,40,50]
-y_modeled = []
-
-#Graph
-graph = ezGraphMM(xmax = 100,
-    ymin=0, ymax=100,
-    x_measured = x_measured,
-    y_measured = y_measured,
-    xLabel="Time (s)",
-    yLabel="Height (cm)")
-
-
-graph.addModeled(0,h)
-
-#TIME LOOP
-for t in range(nsteps):
-  
-    modelTime = t * dt
-
-    dh = Q * dt / (np.pi * r **2)
-    h = h + dh
-
-    dVdt = -k * h 
-    dh = dVdt * dt / (np.pi * r**2)
-    h = h + dh
-
-    if (modelTime in x_measured):
-        print(modelTime, h)
-        y_modeled.append(h)
-
-    graph.addModeled(modelTime, h)
-    #graph.wait(.1)
-
-# s = 0
-# def
-# for i in x_measured:
-#     s = s + x_measured
-#     Ave = s / s.len
-#     print(s)
-
-print('time:', x_measured)   
-print('h_measured:', y_measured)
-print("h_modeled:", y_modeled)
-
-print(f'xavg measured =  {avg(x_measured)}')
-print(f'yavg measured =  {avg(y_measured)}')
-# calculate average values
-
-def absoluteError(lst1, lst2):
-    n = len(lst1)
-    a = 0
-    for i in range(n):
-        # print(i,lst1[i], lst2[i])
-        d = lst1[i] - lst2[i]
-        a += abs(d)
-    return(a)
-
-#residual
-def res(lst1, lst2):
-    n = len(lst1)
-    s = 0
-    for i in range(n):
-       # print(i,lst1[i], lst2[i])
-        d = (lst1[i] - lst2[i]) ** 2
-        s += d
-    return s
-
-r = res(y_measured, y_modeled)
-print(f'residual = {r}')
-
-
-def dsq(lst1):
-    n = len(lst1)
-    s = 0
-    for i in range(n):
-       # print(i,lst1[i], lst2[i])
-        d = (lst1[i] - avg(lst1)) ** 2
-        s += d
-    return s
-
-d = dsq(y_measured)
-print(f'difference = {d}')
-
-def rSquared(lst1, lst2):
-    r2 = 1 - (res(lst1, lst2) / dsq(lst1) )
-    return r2
-
-r2 = rSquared(y_measured, y_modeled)
-print(f'r squared = {r2}')
-
-
-#draw graph
-graph.keepOpen()
