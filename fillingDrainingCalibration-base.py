@@ -4,10 +4,12 @@ from ezGraph import *
 from rStats import *
 
 #difference model
+startTime = time.perf_counter()
 
 #Parameters
-dt = 0.25
-nsteps = 4000
+dt = 5
+nsteps = 200
+
 
 r = 2.25 #radius (cm)
 Q = 30 # Volume inflow rate: (dv/dt) (cubic cm / s)
@@ -25,8 +27,11 @@ graph.add(0,h)
 
 
 #Time Loop
-for t in range(nsteps):
+for t in range(1, nsteps):
     modelTime = t * dt
+
+    if modelTime > 50:
+        Q = 0
 
     # Filling
     dh = Q * dt / (np.pi * r **2)
@@ -42,7 +47,13 @@ for t in range(nsteps):
     #  of the times when a measurement was taken
     
     graph.add(modelTime, h)
-    graph.wait(0.01)
+    #graph.wait(0.01)
+
+endTime = time.perf_counter()
+
+runtime = endTime-startTime
+print(f'runtime: {runtime}')
+
 
 print(modelTime, 'equilibrium =', h)
 
