@@ -16,6 +16,7 @@ Qin  = 30 # Volume inflow rate: (dv/dt) (cubic cm / s)
 h = 0        #initial hight (cm)
 k = 0.15      #outflow rate constant
 dQ = -0.1
+
 #Experimental Data
 y_modeled = []
 
@@ -28,12 +29,13 @@ graph.add(0,h)
 #Time Loop
 for t in range(1, nsteps):
     modelTime = t * dt
-    Qin = dQ*modelTime + 30
+    
+    Qin = (dQ*modelTime) + 30
     if Qin < 0:
         Qin = 0
         
-    if modelTime > 50:
-        Qin = 0
+    # if modelTime > 50:
+    #     Qin = 0
 
     # Filling
     dh = Qin * dt / (np.pi * r **2)
@@ -51,13 +53,16 @@ for t in range(1, nsteps):
     graph.add(modelTime, h)
     #graph.wait(0.01)
 
+    #find max
+    if (graph.y[-2] > graph.y[-1]) and (graph.y[-2] > graph.y[-3]):
+        print(f"Max: {graph.y[-2]}")
+
+
+
 endTime = time.perf_counter()
 
 runtime = endTime-startTime
 print(f'runtime: {runtime}')
-
-
-print(modelTime, 'equilibrium =', h)
 
 #draw graph
 graph.keepOpen()
