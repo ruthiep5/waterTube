@@ -6,11 +6,11 @@ from rStats import *
 #difference model
 
 #Parameters
-dt = 0.25
-nsteps = 4000
+dt = 5
+nsteps = 200
 
 r = 2.25 #radius (cm)
-Q = 30 # Volume inflow rate: (dv/dt) (cubic cm / s)
+Qin = 30 # Volume inflow rate: (dv/dt) (cubic cm / s)
 h = 0        #initial hight (cm)
 k = 0.15      #outflow rate constant
 
@@ -29,7 +29,7 @@ for t in range(nsteps):
     modelTime = t * dt
 
     # Filling
-    dh = Q * dt / (np.pi * r **2)
+    dh = Qin * dt / (np.pi * r **2)
     h = h + dh
 
     # Draining

@@ -10,7 +10,7 @@ dt = 1
 nsteps = 160
 
 r = 2.25 #radius (cm)
-Q = 0 # Volume inflow rate: (dv/dt) (cubic cm / s)
+Qin = 0 # Volume inflow rate: (dv/dt) (cubic cm / s)
 h = 50        #initial hight (cm)
 k = 0.15    #outflow rate constant
 
@@ -35,7 +35,7 @@ for t in range(nsteps):
     modelTime = t * dt
 
 #filling
-    dh = Q * dt / (np.pi * r **2)
+    dh = Qin * dt / (np.pi * r **2)
     h = h + dh
 
 #draining

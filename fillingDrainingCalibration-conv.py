@@ -12,7 +12,7 @@ nsteps = 200
 conv = 0.01         #Convergence Criteria
 
 r = 2.25 #radius (cm)
-Q = 30 # Volume inflow rate: (dv/dt) (cubic cm / s)
+Qin  = 30 # Volume inflow rate: (dv/dt) (cubic cm / s)
 h = 0        #initial hight (cm)
 k = 0.15      #outflow rate constant
 
@@ -33,7 +33,7 @@ for t in range(nsteps):
     h_old = h
 
     # Filling
-    dh = Q * dt / (np.pi * r **2)
+    dh = Qin * dt / (np.pi * r **2)
     h = h + dh
 
     # Draining
